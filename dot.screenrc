@@ -1,0 +1,10 @@
+escape ^Jj
+autodetach on
+bell_msg "^G"
+defkanji utf8
+defencoding utf8
+encoding utf8
+defscrollback 10000
+startup_message off
+vbell off
+hardstatus alwayslastline "%{= Kw}%-w%{=b bw}[%n %t]%{-}%+w"
