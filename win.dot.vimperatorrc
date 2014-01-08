@@ -1,0 +1,294 @@
+" sinner .vimperatorrc
+" 2.1 (created: 2010-02-04 14:08:25)
+
+echo "loading..."
+
+set runtimepath=~/vimperator
+
+
+"
+" --- firefox prefs ---
+"
+
+set! ui.caretWidth=3
+set! browser.sessionstore.max_tabs_undo=100
+set! browser.tabs.closeButtons=2
+set! ui.key.generalAccessKey=0
+set! browser.urlbar.filter.javascript=false
+set! browser.urlbar.maxRichResults=50
+set! dom.popup_maximum=9999
+
+" Open tab background (Gmail/LDR/Fastladder/OpenFL/hatebu)
+autocmd LocationChange (?!https?://(mail\.google\.com\/(mail|a)\/|(reader\.livedoor\.com|fastladder\.com|0\.0\.0\.0\:3000)/reader/|b\.hatena\.ne\.jp/)) :set! browser.tabs.loadDivertedInBackground=false
+autocmd LocationChange https?://(mail\.google\.com\/(mail|a)\/|(reader\.livedoor\.com|fastladder\.com|0\.0\.0\.0\:3000)/reader/|b\.hatena\.ne\.jp/) :set! browser.tabs.loadDivertedInBackground=true
+
+
+"
+" --- vimperator options ---
+"
+
+"set nopreload
+set titlestring=Fx Vimp
+set wildoptions=auto
+set complete=sltS
+set guioptions=rb
+set showtabline=2
+set showstatuslinks=2
+set focuscontent=on
+set visualbell
+hi Bell display: none;
+
+" quick bookmark
+qmark d htd
+qmark e en
+qmark f twf
+qmark g ig
+qmark h htb
+qmark s sin
+qmark t tw
+qmark T tmb
+qmark y yh
+
+
+"
+" --- mapping ---
+"
+
+let mapleader=','
+
+" browse back or forward
+map H <A-Left>
+map L <A-Right>
+
+" scroll
+noremap j 5j
+noremap k 5k
+noremap J <C-d>
+noremap K <C-u>
+
+" tab
+noremap <C-k> <C-p>
+noremap <C-j> <C-n>
+noremap <C-h> <C-p>
+noremap <C-l> <C-n>
+noremap <C-0> :tabfirst<CR>
+noremap <C-$> :tablast<CR>
+noremap <C-S-k> :tabmove! -1<CR>
+noremap <C-S-j> :tabmove! +1<CR>
+noremap <C-S-h> :tabmove! -1<CR>
+noremap <C-S-l> :tabmove! +1<CR>
+
+noremap <Leader>g :open google<Space>
+noremap <Leader>G :tabopen google<Space>
+
+" restart
+noremap <C-r> :restart<CR>
+
+" exchange colon and semicolon
+noremap ; :
+noremap : ;
+
+" exmode
+cnoremap <C-n> <Tab>
+cnoremap <C-p> <S-Tab>
+
+" url no increment or decrement
+noremap ++ <C-a>
+noremap -- <C-x>
+
+" minimal style sheet
+noremap !1 :set usermode<CR>
+noremap !! :set nousermode<CR>
+
+" mark and jump
+noremap <Leader>m ma
+noremap <Leader>j `a
+
+" paste
+inoremap <C-v> <S-Insert>
+
+" switch buffer
+noremap <Leader>p b#<CR>
+
+noremap <Leader>b :bmarks -T=
+noremap <Leader>+ :set guioptions+=m<CR>
+noremap <Leader>- :set guioptions-=m<CR>
+
+
+"
+" --- plugins ---
+"
+
+" plugin_loader.js
+let g:plugin_loader_roots = "~/vimperator/vimperator-plugins/ ~/vimperator/plugin/"
+let g:plugin_loader_plugins = "_libly,appendAnchor,commandBookmarklet,copy,direct_bookmark,feedSomeKeys_2,hatenaStar,ime_controller,ldrize_cooperation,lookupDictionary,migemo_hint,migemo-find,nextlink,sbmcommentsviewer,tombloo,translaten,twitter"
+
+" commandBookmarklet.js
+noremap <Leader>e :bmlen<CR>
+noremap <Leader>f :bmlgr<CR>
+noremap <Leader>i :bmlins<CR>
+noremap <Leader>z :bmlmaru<CR>
+
+" copy.js
+noremap <Leader>ca :copy<Space>anchor<CR>
+noremap <Leader>ct :copy<Space>title<CR>
+noremap <Leader>cu :copy<Space>titleAndURL<CR>
+noremap <Leader>cq :copy<Space>htmlblockquote<CR>
+js <<EOM
+liberator.globalVariables.copy_templates = [
+	{ label: 'anchor',	       value: '<a href="%URL%">%TITLE%</a>' },
+	{ label: 'titleAndURL',    value: '%TITLE% %URL%' },
+	{ label: 'title',          value: '%TITLE%' },
+	{ label: 'url',            value: '%URL%' },
+	{ label: 'markdown',       value: '[%TITLE%](%URL% "%TITLE%")' },
+	{ label: 'markdownsel',    value: '[%SEL%](%URL% "%TITLE%")' },
+	{ label: 'htmlblockquote', value: '<blockquote cite="%URL%" title="%TITLE%">%HTMLSEL%</blockquote>' },
+	{ label: 'ASIN',   value: 'copy ASIN code from Amazon', custom: function(){return content.document.getElementById('ASIN').value;} }
+];
+EOM
+
+" delicious_search.js
+"noremap <Leader>sd :delicioussearch -tags<space>
+
+" direct_bookmark.js
+let g:direct_sbm_use_services_by_tag = "dh" 
+let g:direct_sbm_use_services_by_post = "dh"
+nnoremap s :sbm [
+
+" feedSomeKeys_2.js
+:autocmd LocationChange .* :fmapc
+
+" - Livedoor Reader
+:autocmd LocationChange 'reader\.livedoor\.com/reader' :fmap! j k s a p o v c <Space> <S-Space> z b < >
+
+" - Gmail
+"via http://mail.google.com/support/bin/answer.py?hl=jp&answer=6594
+:autocmd LocationChange 'mail\.google\.(com|co\.jp)/mail' :fmap! c / k j n p o u e m x s ! r a f <C-s> # <S-i> <S-u> [ ] z <S-n> q y . ? ga gs gc gd gi gt *a *n *r *u *s *t
+
+" - Google Reader
+:autocmd LocationChange 'www\.google\.(com|co\.jp)/reader' :fmap! -vkey j k n p m s t v A r S N P X O gh ga gs gt gu u / ?
+:autocmd LocationChange 'www\.google\.(com|co\.jp)/reader' :fmap -vkey -event keydown i o h <Space>
+:autocmd LocationChange 'www\.google\.(com|co\.jp)/reader' :fmap b
+
+" - Google Calendar
+:autocmd LocationChange 'www\.google\.(com|co\.jp)/calendar/' :fmap! -vkey -event keydown t a d w m x c e <Del> / + q s ?
+
+" - Remember the Milk
+"	add / complete / edit / delete tasks
+:autocmd LocationChange https?://www\.rememberthemilk\.com/home/[^/]+/#section\.tasks :fmap! t c p d f g s u l y r z <C-1>,1 <C-2>,2 <C-3>,3 <C-4>,4 <Del> <Tab>
+"	select tasks / tab switch / multiple mode
+:autocmd LocationChange https?://www\.rememberthemilk\.com/home/[^/]+/#section\.tasks :fmap a n k j i h m
+"	list switch
+:autocmd LocationChange https?://www\.rememberthemilk\.com/home/[^/]+/#section\.tasks :fmap <C-H>,<C-S-Left> <C-L>,<C-S-Right>
+
+" - はてブ
+":autocmd LocationChange ^http://b\.hatena\.ne\.jp/sinnerthesinner :fmap j k o e b
+
+" - Tumblr
+:autocmd LocationChange '\.tumblr\.com/' :fmap! j k h l t
+
+" hatena bookmark (addon)
+noremap <Leader>h :hbtab<Space>
+js <<EOM
+liberator.globalVariables.hBookmark_shortcuts = {
+    hintsAdd     : 'c',
+    hintsComment : 'C',
+    add          : ['c'],
+    comment      : ['C'],
+};
+if (typeof hBookmark != 'undefined') liberator.loadScript('chrome://hatenabookmark/content/vimperator/plugin/hatenabookmark.js', {__proto__: this});
+EOM
+
+" ime_controller.js
+let g:ex_ime_mode = "inactive"
+let g:textarea_ime_mode = "inactive"
+
+" ldrize_cooperation.js
+noremap <Leader>l :toggleldrizecooperation<CR>
+let g:ldrc_captureMappings = "['j', 'k', 'p', 'o', 'l', '?']"
+let g:ldrc_intelligence_bind = "true"
+let g:ldrc_skip = "0.15"
+
+" lookupDictionary.js
+noremap <Leader>de :eijiro<Space>
+noremap <Leader>dg :goodictionary<Space>
+noremap <Leader>da :answers<Space>
+
+" migemo_hint.js
+set hintmatching=custom
+
+" nextlink.js
+let g:nextlink_followlink = "true"
+
+" sbmcommentsviewer.js
+noremap <Leader>v :viewSBMComments<CR>
+let g:def_sbms = "h"
+let g:def_sbm_format = "id,timestamp,tagsAndComment"
+
+" tombloo.js
+noremap t :tombloo! Link<CR>
+noremap <Leader>q :tombloo Quote<CR>
+
+" twitter.js
+noremap w :twitter<Space>
+noremap W :twitter!<Space>
+noremap <Leader>r :twitter<Space>d<Space>rtm<Space>
+noremap <Leader>@ :twitter!@<CR>
+
+
+"
+" --- javascript ---
+"
+
+" copy anthor on hint mode (;A)
+js <<EOM
+hints.addMode( 'A', 'copy URL and description',
+  function (element) util.copyToClipboard('<a href="' + element.href + '">' + element.textContent + '</a>', true),
+  function () '//a[@href]'
+);
+EOM
+
+" show feed button to status bar
+js <<EOM
+(function(){
+	var feedPanel = document.createElement('statusbarpanel');
+	var feedButton = document.getElementById('feed-button');
+	feedPanel.setAttribute('id','feed-panel-clone');
+	feedPanel.appendChild(feedButton.cloneNode(true));
+	feedButton.parentNode.removeChild(feedButton);
+	document.getElementById('status-bar').insertBefore(feedPanel,document.getElementById('security-button'));
+})();
+EOM
+
+" Add Mapping <C-c> to copy or stop loading
+"	via http://vimperator.g.hatena.ne.jp/blue_ring/20090403/1238762521
+js <<EOM
+mappings.addUserMap([modes.NORMAL,modes.VISUAL],['<C-c>'], 'Copy selected text or stop loading',
+    function(){
+		var sel = window.content.window.getSelection().toString();
+		if(!sel){
+			var frames = buffer.evaluateXPath('//frame|//iframe');
+			for(let i = 0, l = frames.snapshotLength; i < l; i++){
+				sel = frames.snapshotItem(i).contentWindow.getSelection().toString();
+				if(sel) break;
+			}
+		}
+		if(sel){
+			util.copyToClipboard(sel,true);
+		}else{
+			BrowserStop();
+			commandline.echo('Stopped loading !');
+		}
+    }
+);
+EOM
+
+"
+" --- style ---
+"
+colorscheme vimplight
+hi CompResult widht: 45%; overflow: hidden; max-width; 60%;
+
+echo "done"
+
+" vim: set ft=vimperator:
